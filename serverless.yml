@@ -1,4 +1,4 @@
-service: fetch_functions
+service: fetch
 
 provider:
   name: aws
@@ -55,10 +55,10 @@ plugins:
 
 custom:
   pythonRequirements:
-     dockerizePip: non-linux
+     dockerizePip: true
 
 functions:
-fetch_database:
-  handler: fetch_database.fetch_data
-fetch_dynamodb:
-  handler: fetch_dynamodb.fetch_data
+  fetch_database:
+    handler: fetch_database.fetch_data
+  fetch_dynamodb:
+    handler: fetch_dynamodb.fetch_data
