@@ -1,0 +1,64 @@
+service: fetch_functions
+
+provider:
+  name: aws
+  runtime: python3.6
+
+iamRoleStatements:
+  -  Effect: "Allow"
+     Action:
+       - "s3:GetBucketLocation"
+       - "s3:ListAllMyBuckets"
+     Resource: "arn:aws:s3:::*"
+  -  Effect: "Allow"
+     Action:
+       - "s3:ListBucket"
+     Resource:
+      Fn::Join:
+        - ""
+        - - "arn:aws:s3:::"
+          - ${opt:bucket}
+  -  Effect: "Allow"
+     Action:
+       - "s3:PutObject"
+       - "s3:PutObjectAcl"
+       - "s3:GetObject"
+       - "s3:DeleteObject"
+     Resource:
+      Fn::Join:
+        - ""
+        - - "arn:aws:s3:::"
+          - ${opt:bucket}
+          - "/*"
+  - Effect: "Allow"
+    Action:
+      - "dynamodb:Query"
+      - "dynamodb:Scan"
+      - "dynamodb:GetItem"
+      - "dynamodb:PutItem"
+      - "dynamodb:UpdateItem"
+      - "dynamodb:DeleteItem"
+    Resource:
+      - ${opt:dynamodb_table_arn}
+
+environment:
+  LOCALHOST: ${opt:localhost}
+  DATABASE: ${opt:localhost}
+  USER: ${opt:user}
+  PASSWORD: ${opt:password}
+  TABLE: ${opt:table}
+  DYNAMODB_TABLE: ${opt:dynamodb_table}
+  DYNAMODB_TABLE_ARN: ${opt:dynamodb_table_arn}
+
+plugins:
+   - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+     dockerizePip: non-linux
+
+functions:
+fetch_database:
+  handler: fetch_database.fetch_data
+fetch_dynamodb:
+  handler: fetch_dynamodb.fetch_data
